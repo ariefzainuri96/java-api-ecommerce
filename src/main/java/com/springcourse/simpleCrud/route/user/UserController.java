@@ -23,4 +23,9 @@ public class UserController {
     public ResponseEntity<BaseResponse<String>> login(@RequestBody LoginRequest request) {
         return userService.login(request);
     }
+
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<BaseResponse<UserProfile>> getProfile(@PathVariable int id) {
+        return userService.getProfile(id);
+    }
 }

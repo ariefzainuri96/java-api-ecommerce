@@ -1,7 +1,6 @@
 package com.springcourse.simpleCrud.route.user;
 
 import com.springcourse.simpleCrud.model.schema.UserProfile;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,9 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class SecurityUserService implements UserDetailsService {
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
     public SecurityUserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -22,7 +20,7 @@ public class SecurityUserService implements UserDetailsService {
         UserProfile user = userRepository.findByEmail(username).orElse(null);
 
         if (user == null) {
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException("User not found!");
         }
 
         return new UserPrincipal(user);

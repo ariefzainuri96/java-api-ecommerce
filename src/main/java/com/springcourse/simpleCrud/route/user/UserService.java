@@ -28,6 +28,11 @@ public class UserService {
         this.jwtAuthService = jwtAuthService;
     }
 
+    public ResponseEntity<BaseResponse<UserProfile>> getProfile(int id) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new BaseResponse<>("User profile retrieved successfully", userRepository.findById(id).orElse(null)));
+    }
+
     public ResponseEntity<BaseResponse<UserProfile>> register(UserProfile user) {
         var userExists = userRepository.findByEmail(user.getEmail()).orElse(null);
 
@@ -55,7 +60,8 @@ public class UserService {
 
         if (authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.OK)
-                    .body(new BaseResponse<>("Login success", jwtAuthService.generateToken(request.getEmail())));
+                    .body(new BaseResponse<>("Login success",
+                            jwtAuthService.generateToken(user)));
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new BaseResponse<>("Failed to login!", null));
