@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:16.3
+    container_name: java-api-ecommerce-container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Rohanwebid96dong
+      POSTGRES_DB: java-api-ecommerce-db
+    ports:
+      # 5443 is for host / local machine
+      # 5442 is for container
+      - 7433:5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
