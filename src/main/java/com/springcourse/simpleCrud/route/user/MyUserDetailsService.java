@@ -7,11 +7,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SecurityUserService implements UserDetailsService {
+public class MyUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public SecurityUserService(UserRepository userRepository) {
+    public MyUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -20,7 +20,7 @@ public class SecurityUserService implements UserDetailsService {
         UserProfile user = userRepository.findByEmail(username).orElse(null);
 
         if (user == null) {
-            throw new UsernameNotFoundException("User not found!");
+            throw new UsernameNotFoundException("Email or password is invalid!");
         }
 
         return new UserPrincipal(user);

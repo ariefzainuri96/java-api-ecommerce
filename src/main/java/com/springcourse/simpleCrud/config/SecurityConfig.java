@@ -1,6 +1,6 @@
 package com.springcourse.simpleCrud.config;
 
-import com.springcourse.simpleCrud.route.user.SecurityUserService;
+import com.springcourse.simpleCrud.route.user.MyUserDetailsService;
 import com.springcourse.simpleCrud.route.user.jwt.JWTAuthService;
 import com.springcourse.simpleCrud.route.user.jwt.JWTFilter;
 import org.springframework.context.annotation.Bean;
@@ -24,20 +24,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final SecurityUserService securityUserService;
+    private final MyUserDetailsService userDetailsService;
     private final JWTAuthService jwtAuthService;
 
-    public SecurityConfig(SecurityUserService securityUserService, JWTAuthService jwtAuthService) {
+    public SecurityConfig(MyUserDetailsService userDetailsService, JWTAuthService jwtAuthService) {
         this.jwtAuthService = jwtAuthService;
-        this.securityUserService = securityUserService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // Add JwtFilter to the filter chain
-        http.addFilterBefore(new JWTFilter(jwtAuthService), UsernamePasswordAuthenticationFilter.class);
-
         return http
+                /*
+                 * JWTFilter class will check if the token is valid or not
+                 */
+                .addFilterBefore(new JWTFilter(jwtAuthService), UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         // Setup request that you don't want to be authenticated
@@ -58,7 +59,8 @@ public class SecurityConfig {
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(new BCryptPasswordEncoder(10));
-        provider.setUserDetailsService(securityUserService);
+        provider.setUserDetailsService(userDetailsService);
+        provider.setHideUserNotFoundExceptions(false);
 
         return provider;
     }

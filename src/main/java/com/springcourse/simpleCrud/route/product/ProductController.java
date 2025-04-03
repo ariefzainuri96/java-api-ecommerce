@@ -18,7 +18,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<BaseResponse<List<Product>>> getProducts(@RequestParam(required = false) String name) {
         if (name == null) {
             return productService.getAllProduct();
@@ -33,7 +33,7 @@ public class ProductController {
         return productService.getProductById(id);
     }
 
-    @PostMapping("")
+    @PostMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<BaseResponse<Product>> addProduct(@RequestBody Product product) {
         return productService.addProduct(product);

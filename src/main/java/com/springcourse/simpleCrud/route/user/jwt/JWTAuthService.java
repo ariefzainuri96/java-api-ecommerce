@@ -3,8 +3,6 @@ package com.springcourse.simpleCrud.route.user.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.springcourse.simpleCrud.model.schema.UserProfile;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,15 +17,15 @@ public class JWTAuthService {
     }
 
     // Generate a JWT
-    public String generateToken(UserProfile user) {
+    public String generateToken(String email, String password, String role) {
         long exp = System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 365);
 
         Map<String, Object> payload = new HashMap<>();
-        payload.put("role", user.getIsAdmin() ? "ROLE_ADMIN" : "ROLE_USER");
-        payload.put("pass", user.getPassword());
+        payload.put("role", role);
+        payload.put("pass", password);
 
         return JWT.create()
-                .withSubject(user.getEmail())
+                .withSubject(email)
                 .withPayload(payload)
                 .withIssuer(issuer)
                 .withIssuedAt(new Date())

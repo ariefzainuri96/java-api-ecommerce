@@ -20,7 +20,7 @@ public class UserPrincipal implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // handle roles
         if (user.getIsAdmin()) {
-            return List.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN"));
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
         } else {
             return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
         }

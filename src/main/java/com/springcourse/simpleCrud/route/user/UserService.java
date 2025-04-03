@@ -49,19 +49,27 @@ public class UserService {
     }
 
     public ResponseEntity<BaseResponse<String>> login(LoginRequest request) {
-        var user = userRepository.findByEmail(request.getEmail()).orElse(null);
-
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BaseResponse<>("User not found", null));
-        }
-
+        /*
+         * When we create this Authentication object, it will refer to
+         * SecurityUserService class and call loadByUsername method
+         * then we can get the data using getPrincipal() method
+         */
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        if (authentication.isAuthenticated()) {
+        /*
+         * getPrincipal() method will return UserPrincipal object that implements
+         * UserDetails
+         */
+        if (authentication.isAuthenticated() && authentication.getPrincipal() instanceof UserPrincipal) {
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            String role = userPrincipal.getAuthorities().stream().findFirst().get().getAuthority();
+
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new BaseResponse<>("Login success",
-                            jwtAuthService.generateToken(user)));
+                            jwtAuthService.generateToken(userPrincipal.getUsername(), userPrincipal.getPassword(),
+                                    role)));
+
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new BaseResponse<>("Failed to login!", null));
